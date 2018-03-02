@@ -1,0 +1,5 @@
+Sequence alignments.
+
+Edit graph for a pair of sequences.
+On an edit graph, depth follows a diagonal through each pair of bases (see lecture for illustration).
+Paths are alignments of subsequences. Diagonals pull a base from each sequence. Horizontals and verticals put a gap character in one sequence.

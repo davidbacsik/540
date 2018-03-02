@@ -1,0 +1,18 @@
+Assignment: GS 540 HW2
+Name: David Bacsik
+Email: dbacsik@uw.edu
+Language: Python
+Runtime: 0.255019187927 sec
+
+>gi|400273702|gb|CP003508.1| Mycoplasma gallisepticum NC96_1596-4-2P, complete genome
+A=337443
+C=156212
+T=336693
+G=155909
+N=0
+*=986257
+
+Score: 11.07
+Begin: 344420
+End: 344444
+Path: GGCGGCGGCCCCTGGCGATGGCCG

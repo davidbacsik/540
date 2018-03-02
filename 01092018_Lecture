@@ -1,0 +1,22 @@
+Algorithms generalities/complexity
+Directed Graphs, WDAGS
+Dynamic Programming
+
+Order is basic unit of run time.
+Coefficient matters enourmously, too though.
+
+In an undirected graph, an edge connects two points and is non-directional.
+In a directed graph, each node has a number of inputs (in-degree) and outputs (out-degree).
+A path of length K follows a sequence of edges between several points (vertexes).
+
+Path is a valid walk through several vertices.
+Cycle is a path through vertices back to originating vertex.
+
+A directed acyclic graph is a directed graph with no cycles.
+Parent/child relationship: edge connects the two vertices.
+Ancestor/Descendant: path connects the two vertices.
+
+In a DAG, the length of a path cannot exceed V-1, because otherwise you get a cycle.
+
+Depth = lenght of the longest path ending at V.
+Every descendent (w) of a node (v) has higer depth than v.

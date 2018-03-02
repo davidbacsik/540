@@ -1,0 +1,39 @@
+# Graph file
+
+######### FORMAT ##########
+# Each line designates a vertex or edge. Each line contains the following information, separated by commas.
+
+# For vertices:
+# V to designate 'vertex'
+# Label (name). Max 10 characters. Must be unique.
+# START [optional] if the path must start at this vertex
+# END [optional] if the path must end at this vertex
+
+# For edges:
+# E to designate 'edge'
+# Label (name). Max 10 characters. Does NOT need to be unique.
+# Where the edge starts: label of vertex
+# Where the edge ends: label of vertex
+# Weight of edge
+
+V,vii,START
+V,vi
+V,v
+V,iv
+V,iii
+V,ii
+V,i,END
+
+
+E,L,vii,vi,-3
+E,K,vii,v,1
+E,J,vii,iv,-3
+E,I,vi,iv,4
+E,H,v,iv,-5
+E,G,vi,iii,-3
+E,F,v,ii,2
+E,E,iv,iii,-3
+E,D,iv,ii,4
+E,C,iv,i,-2
+E,B,iii,i,5
+E,A,ii,i,-1

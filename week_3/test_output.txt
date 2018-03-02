@@ -1,0 +1,44 @@
+Assignment: GS 540 HW2
+Name: David Bacsik
+Email: dbacsik@uw.edu
+Language: Python
+Runtime: 2.28134489059 sec
+
+Segment Histogram:
+Non-Elevated CN Segments=8
+Elevated CN Segments=7
+
+Elevated CN Segment List:
+48164 48273 66.76
+67646 68115 97.51
+105528 106003 63.04
+106904 107345 41.67
+122792 123034 66.56
+164376 164665 62.09
+165086 166103 225.95
+
+Annotations:
+
+Start: 48164
+End: 48273
+Description: X
+
+Start: 67646
+End: 68115
+Description: X
+
+Start: 105528
+End: 106003
+Description: X
+
+Read Start Histogram for Non-Elevated CN Segments:
+0=331908
+1=19439
+2=4272
+>=3=1332
+
+Read Start Histogram for Elevated CN Segments:
+0=1656
+1=542
+2=352
+>=3=499

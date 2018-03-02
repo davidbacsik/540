@@ -1,0 +1,10 @@
+Assignment: GS 540 HW2
+Name: David Bacsik
+Email: dbacsik@uw.edu
+Language: Python
+Runtime: 0.00140810012817 sec
+
+Score: 8.0
+Begin: vi
+End: ii
+Path: ID
