@@ -49,10 +49,6 @@ class read(object):
         self.seq = str()
         self.length = int()
 
-        # Graph form
-        #self.verts = np.array()
-        #self.edges = np.array()
-
 def parseFASTA(fasta_file):
     '''
     Takes in FASTA file and returns a parsed sequence, name, and length.
@@ -89,7 +85,7 @@ def parseFASTA(fasta_file):
                     reads.append(current_read)
                     current_read = read()
 
-def makeGraph():
+def makeGraph(read):
     '''
     Converts a FASTA sequence to an edit graph. Edges are residues.
 
@@ -101,6 +97,17 @@ def makeGraph():
         read.verts (np.array): array of vertices
         read.edges (np.array): array of edges
     '''
+
+    # Make vertices
+    read.verts = np.empty(shape=(1,read.length), dtype=int)
+
+    # Make edges
+    read.edges = np.empty(shape=(1,read.length), dtype='object')
+
+    # Iterate and fill verts and edges.
+    for i in range(read.length):
+        read.verts[0,i] = i
+        read.edges[0,i] = [read.seq[i], i, i+1]
 
 # MAIN
 def main():
@@ -122,6 +129,16 @@ def main():
 
     # Open graph and iterate through reads
     parseFASTA(args.f)
+
+    # Convert reads to graph format
+    for x in reads:
+        makeGraph(x)
+
+    # Check assignment.
+    for x in reads:
+        print(x.name)
+        print(x.edges)
+
 
     # End timer
     end_time = time.time()
