@@ -21,6 +21,8 @@ def parseArgs():
             'template.csv for graph file format.')
     parser.add_argument('--f', help='FASTA file containing exactly 3 sequences',
             required=True)
+    parser.add_argument('--b', help='2-D Matrix of amino acid substitution scores.',
+            required=False, default='blosum62.txt')
     parser.add_argument('--out', help='Prefix for output file (optional)',
             required=False, default='')
 
@@ -28,6 +30,53 @@ def parseArgs():
 
 # Global args
 reads = list()
+subs = list()
+gap_penalty = int()
+
+class sub(object):
+    '''
+    An individual amino acid substitution and its score.
+
+    Args:
+        initial (str): Character representing original amino acid
+        final (str): Character representing derived amino acid
+        score (int): Value for this substitution score
+    '''
+
+    def __init__(self):
+        '''
+        Initilize relevant variables.
+        '''
+
+        self.initial = str()
+        self.final = str()
+        self.score = int()
+
+def parseBlosum(blosum_file):
+    '''
+    Reads in blosum substitution file and organizes scores for calcuations.
+
+    Args:
+        blosum_file (str): name of blosum substitution file
+
+    Returns:
+        sub.initial (str): Character representing original amino acid
+        sub.final (str): Character representing derived amino acid
+        sub.score (int): Value for this substitution score
+    '''
+
+    # Global vars
+    global subs
+    global gap_penalty
+
+    with open(blosum_file, 'r') as f:
+        for line in f:
+            if 'Gap' in line:
+                line = line.split()
+                for item in line:
+                    if type(item) == int:
+                        print(item)
+
 
 class read(object):
     '''
@@ -85,7 +134,7 @@ def parseFASTA(fasta_file):
                     reads.append(current_read)
                     current_read = read()
 
-def makeGraph(read):
+def seqToGraph(read):
     '''
     Converts a FASTA sequence to an edit graph. Edges are residues.
 
@@ -107,7 +156,7 @@ def makeGraph(read):
     # Iterate and fill verts and edges.
     for i in range(read.length):
         read.verts[0,i] = i
-        read.edges[0,i] = [read.seq[i], i, i+1]
+        read.edges[0,i] = read.seq[i]
 
 # MAIN
 def main():
@@ -115,6 +164,7 @@ def main():
 
     # Global vars
     global reads
+    global subs
 
     # Start timer
     start_time = time.time()
@@ -127,17 +177,15 @@ def main():
             '\n\t'.join(['{0} = {1}'.format(arg, val) for (arg, val) in
             vars(args).items()])))
 
+    # Open Blosum Matrix and parse
+    parseBlosum(args.b)
+
     # Open graph and iterate through reads
     parseFASTA(args.f)
 
     # Convert reads to graph format
     for x in reads:
-        makeGraph(x)
-
-    # Check assignment.
-    for x in reads:
-        print(x.name)
-        print(x.edges)
+        seqToGraph(x)
 
 
     # End timer
