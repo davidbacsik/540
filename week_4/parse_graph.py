@@ -142,27 +142,35 @@ def mergeArrays():
         for j in range(y.length+1):
             for k in range(z.length+1):
                 all_verts[i,j,k] = (i,j,k)
-    print(all_verts.size)
 
     # Merge edges
     all_edges = list()
 
-    for coords in np.nditer(all_verts, flags=['refs_ok', 'common_dtype']):
-        print(coords)
-        '''x_vals = [coords[0], coords[0]+1]
-        y_vals = [coords[1], coords[1]+1]
-        z_vals = [coords[2], coords[2]+1]
-        print(x_vals)
-        print(y_vals)
-        print(z_vals)'''
-        '''for i in x_vals:
-            for j in y_vals:
-                for k in z_vals:
-                    if i != coords[0] or j != coords[1] or k != coords[2]:
-                        all_edges.append((coords[0],coords[1],coords[2]),(i,j,k))'''
+    for all_coords in np.nditer(all_verts, flags=['refs_ok', 'external_loop']):
+        for coords in all_coords:
+            x_vals = [coords[0], coords[0]+1]
+            y_vals = [coords[1], coords[1]+1]
+            z_vals = [coords[2], coords[2]+1]
+            for i in x_vals:
+                for j in y_vals:
+                    for k in z_vals:
+                        #if i != coords[0] or j != coords[1] or k != coords[2]:
+                        try:
+                            x_char = x.seq[i]
+                        except IndexError:
+                            x_char = '-'
+                        try:
+                            y_char = y.seq[j]
+                        except IndexError:
+                            y_char = '-'
+                        try:
+                            z_char = z.seq[k]
+                        except IndexError:
+                            z_char = '-'
+                        all_edges.append([(coords[0],coords[1],coords[2]),(i,j,k), '{0}{1}{2}'.format(x_char,y_char,z_char)])
 
-    print(all_edges)
-    print(all_edges)
+    for edge in all_edges:
+        print(edge)
 
 def writeOutput():
     '''
