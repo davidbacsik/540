@@ -46,6 +46,12 @@ edge_histo = dict()
 gap_penalty = int()
 blosum_lookup = dict()
 blosom_array = None
+blosum_dict = dict()
+
+# Final alignment, stored as Lis
+end_vertex = tuple() # Tuple storing max scoring vertex, to start traceback
+max_score = int() # int for above
+final_alignment = list()
 
 class read(object):
     '''
@@ -122,6 +128,7 @@ def parseBlosum(blosum_file, gap_value):
     global gap_penalty
     global blosum_lookup
     global blosum_array
+    global blosum_dict
 
     # Parse Gap penalty
     gap_penalty = gap_value
@@ -249,6 +256,9 @@ def makeGraph():
     global all_edges
     global edge_histo
     global gap_penalty
+    global blosum_dict
+    global end_vertex
+    global max_score
 
     # Read in individual graphs
     x = reads[0]
@@ -294,16 +304,22 @@ def makeGraph():
 
                                     if x_char != '-' and y_char != '-':
                                         current_edge.xy_score = int(calculateScore(x_char,y_char))
-                                    else:
+                                    elif x_char != '-' or y_char != '-':
                                         current_edge.xy_score = int(gap_penalty)
+                                    else:
+                                        current_edge.xy_score = 0
                                     if x_char != '-' and z_char != '-':
                                         current_edge.xz_score = int(calculateScore(x_char,z_char))
-                                    else:
+                                    elif x_char != '-' or z_char != '-':
                                         current_edge.xz_score = int(gap_penalty)
+                                    else:
+                                        current_edge.xz_score = 0
                                     if y_char != '-' and z_char != '-':
                                         current_edge.yz_score = int(calculateScore(y_char,z_char))
-                                    else:
+                                    elif y_char != '-' or z_char != '-':
                                         current_edge.yz_score = int(gap_penalty)
+                                    else:
+                                        current_edge.yz_score = 0
 
                                     current_edge.edge_score = current_edge.xy_score + current_edge.xz_score + current_edge.yz_score
                                     current_edge.parent_score = all_verts[i2,j2,k2].score
@@ -320,6 +336,9 @@ def makeGraph():
                                     ce_scores[current_edge.alignment] = current_edge.score
 
                                     # Add to Histo
+                                    if current_edge.alignment not in blosum_dict.iterkeys():
+                                        blosum_dict[current_edge.alignment] = current_edge.edge_score
+
                                     if current_edge.alignment in edge_histo.iterkeys():
                                         edge_histo[current_edge.alignment] += 1
                                     else:
@@ -331,23 +350,76 @@ def makeGraph():
                     current_vertex.score = current_edges[best_edge].score
                     current_vertex.alignment = current_edges[best_edge].alignment
                     all_verts[i,j,k] = current_vertex
+                    if current_vertex.score > max_score:
+                        max_score = current_vertex.score
+                        end_vertex = (i,j,k)
+
+    blosum_dict = sorted(blosum_dict.items())
+    edge_histo = sorted(edge_histo.items())
+
+def maxPath(end_vertex):
+    ''' Traces back through parents to maximum path
+
+    Args:
+        end_vertex (tuple): coordinates of vertext to start at
+        alignment (str): Alignment of edge ending at that vertex
+        parent (tuple): coordinates of parent vertex
+    Returns:
+        final_alignment: ordered list of alignments at each edge in max path.
+    '''
+
+    global final_alignment
+    global all_verts
+
+    i,j,k = end_vertex
+    while True:
+        if all_verts[i,j,k].parent != None:
+            final_alignment.append(all_verts[i,j,k].alignment)
+            i,j,k = all_verts[i,j,k].parent
+        else:
+            return False
+
 
 def writeOutput(runtime):
     '''
     Writes graph to text file.
 
     Args:
+        blosum_dict (dict): List of all edges used in graph
         all_verts (np.array): Empty array of all vertices. Dimensions of 3 sequence lengths.
         all_edges (np.array): Sparse matrix of all edges. Edges are stored as single character.
         runtime (float): Runtime in seconds
+        max_score (int): Score of max weight path
+        final_alignment (list): List of alignments used in highest weight path.
     '''
 
+    global blosum_dict
+    global max_score
+    global final_alignment
+
     with open('results.txt', 'w') as out_file:
+        out_file.write('Assignment: HW4\n')
+        out_file.write('Name: David Bacsik\n')
+        out_file.write('Email: dbacsik@uw.edu\n')
         out_file.write('Run time: {0}\n\n'.format(runtime))
-        for i in range(reads[0].length+1):
-            for j in range(reads[1].length+1):
-                for k in range(reads[2].length+1):
-                    out_file.write('Vertex: {0}, Parent: {1}, Score: {2}\n'.format((i,j,k), all_verts[i,j,k].parent, all_verts[i,j,k].score))
+
+        out_file.write('Score: {0}\n\n'.format(float(max_score)))
+
+        out_file.write('Edge weights:\n')
+        for key, val in blosum_dict:
+            out_file.write('{0} = {1}\n'.format(key,val))
+
+        out_file.write('\n\n')
+
+        out_file.write('Edge counts:\n')
+        for key, val in edge_histo:
+            out_file.write('{0} = {1}\n'.format(key,val))
+
+        out_file.write('\n\n')
+
+        out_file.write('Local alignment:\n')
+        for a in final_alignment[::-1]:
+            out_file.write('{0}\n'.format(a))
 
 # MAIN
 def main():
@@ -355,6 +427,7 @@ def main():
 
     # Global vars
     global reads
+    global end_vertex
 
     # Start timer
     start_time = time.time()
@@ -379,6 +452,9 @@ def main():
 
     # Make graph from all 3 sequences.
     makeGraph()
+
+    # traceback
+    maxPath(end_vertex)
 
     # End timer
     end_time = time.time()
