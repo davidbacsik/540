@@ -2,7 +2,7 @@ Assignment: GS540 HW1
 Name: David Bacsik
 Email: dbacsik@uw.edu
 Language: Python
-Run time: 0.130193948746
+Run time: 1.89165210724
 
 Fasta 1: test_files/flu_1.fna
 >CY222533.1 Influenza A virus (A/Texas/12/2017(H3N2)) hemagglutinin (HA) gene, complete cds

@@ -6,6 +6,7 @@
 
 # Imports
 
+from pympler import asizeof
 import argparse
 import time
 import numpy as np
@@ -128,15 +129,16 @@ def populateSuffix():
     for g in genomes:
         total_length += g.length
 
+    #print('Size of suffix array: {0}'.format(asizeof.asizeof(suffix_array)))
     suffix_array = np.empty(total_length, dtype=object)
+    #print('Size of suffix array: {0}'.format(asizeof.asizeof(suffix_array)))
 
     # Make suffices and put into array
     total_count = 0
     for g in genomes:
         for i in range(g.length):
             current_suffix = suffix()
-            current_suffix.seq = g.seq[i:]
-            current_suffix.length = len(current_suffix.seq)
+            current_suffix.length = len(g.seq[i:])
             current_suffix.source = g.name
             current_suffix.position = i
             if 'rev_comp' in g.name:
@@ -144,10 +146,31 @@ def populateSuffix():
             else:
                 current_suffix.orientation = 'forward'
             suffix_array[total_count] = current_suffix
+            #print('Current suffix ({0}) size: {1}; array size: {2}'.format(total_count, asizeof.asizeof(current_suffix), asizeof.asizeof(suffix_array)))
             total_count += 1
 
-    #for x in range(10):
-    #    print(suffix_array[x].source,suffix_array[x].orientation,suffix_array[x].seq)
+def getSuf(suffix):
+    '''
+    Compares two suffix sequences
+    '''
+
+    global genomes
+
+    seq = None
+
+    for g in genomes:
+        if suffix.source == g.name:
+            seq = g.seq[suffix.position:]
+
+    return seq
+
+def cmpSufs(suf_a, suf_b):
+    #print(suf_a.source, suf_a.position, suf_b.source, suf_b.position)
+
+    a = getSuf(suf_a)
+    b = getSuf(suf_b)
+
+    return cmp(a, b)
 
 def sortSuffix():
     '''
@@ -155,7 +178,8 @@ def sortSuffix():
     '''
     global suffix_array
 
-    suffix_array = sorted(suffix_array, key = lambda sequence: sequence.seq)
+    suffix_array = sorted(suffix_array, cmp = cmpSufs)
+
 
 def findLongest():
     '''
@@ -172,10 +196,14 @@ def findLongest():
         suffix_a = suffix_array[i]
         suffix_b = suffix_array[i+1]
 
+        #print(suffix_a.source, suffix_a.position, suffix_a.length, getSuf(suffix_a))
+        #print(suffix_b.source, suffix_b.position, suffix_b.length, getSuf(suffix_b))
+
         check_length = min(suffix_a.length, suffix_b.length)
         counter = 0
         for x in range(check_length):
-            if suffix_a.seq[x] == suffix_b.seq[x]:
+            #print(getSuf(suffix_a)[x], getSuf(suffix_b)[x])
+            if getSuf(suffix_a)[x] == getSuf(suffix_b)[x]:
                 counter += 1
             else:
                 if counter > max_counter:
@@ -224,7 +252,7 @@ def writeOutput(args, runtime):
         out_file.write('Number of match strings: {0}\n\n'.format(len(max_suffices)))
 
         for match in max_suffices:
-            out_file.write('Match string: {0}\n'.format(match[0].seq[:match[2]]))
+            out_file.write('Match string: {0}\n'.format(getSuf(match[0])[:match[2]]))
             out_file.write('Description:\n\n')
 
             out_file.write('Fasta: {0}\n'.format(match[0].source.strip('_rev_comp')))
@@ -255,26 +283,32 @@ def main():
             vars(args).items()])))
 
     # Load genomes
+    print('Loading genomes.\n')
     for f in [args.f1, args.f2]:
         print(f)
         current_genome = getSequence(f)
         genomes.append(current_genome)
 
     # Make Reverse complements
+    print('Making reverse compliments.\n')
     for g in genomes[:]:
         g1 = revComp(g)
         genomes.append(g1)
 
+    print('Calculating sequence makeup.\n')
     # Calculate sequence makeup
     for g in genomes[:]:
         countChars(g)
 
+    print('Populating suffix array with start positions.\n')
     # Make Suffix Array
     populateSuffix()
 
+    print('Sorting.\n')
     # Sort Suffix Array
     sortSuffix()
 
+    print('Finding longest match.\n')
     # Find longest matching string
     findLongest()
 
@@ -282,6 +316,7 @@ def main():
     end_time = time.time()
     runtime = end_time-start_time
 
+    print('Writing output.\n')
     # Write output
     writeOutput(args, runtime)
 
