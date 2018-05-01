@@ -65,7 +65,7 @@ def getSequence(in_file):
                 line = line.split()
                 current_genome.name = line[0]
             else:
-                seq_list.append(line.upper())
+                seq_list.append(line.strip().replace(" ","").upper())
 
     current_genome.seq = ''.join(map(str, seq_list))
 
@@ -209,8 +209,14 @@ def findLongest():
                 if counter > max_counter:
                     max_counter = counter
                     max_suffices = [(suffix_a,suffix_b,counter)]
+                    print('\nLonger suffix match found: {0} bp'.format(counter))
+                    print(getSuf(suffix_a)[:x], suffix_a.source, suffix_a.position)
+                    print(getSuf(suffix_b)[:x], suffix_b.source, suffix_b.position)
                 elif counter == max_counter:
                     max_suffices.append((suffix_a,suffix_b,counter))
+                    print('\nNew suffix match appended: {0} bp'.format(counter))
+                    print(getSuf(suffix_a)[:x], suffix_a.source, suffix_a.position)
+                    print(getSuf(suffix_b)[:x], suffix_b.source, suffix_b.position)
                 break
 
 def writeOutput(args, runtime):
@@ -299,8 +305,11 @@ def main():
     # Calculate sequence makeup
     for g in genomes[:]:
         countChars(g)
+        print('Name: ' + g.name)
+        print('Sequence:\n' + g.seq)
+        print('Content:\n' + str(g.content))
 
-    print('Populating suffix array with start positions.\n')
+    print('\nPopulating suffix array with start positions.\n')
     # Make Suffix Array
     populateSuffix()
 
@@ -316,7 +325,7 @@ def main():
     end_time = time.time()
     runtime = end_time-start_time
 
-    print('Writing output.\n')
+    print('\nWriting output.\n')
     # Write output
     writeOutput(args, runtime)
 
