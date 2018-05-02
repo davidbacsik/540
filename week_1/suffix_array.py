@@ -199,6 +199,7 @@ def findLongest():
         #print(suffix_a.source, suffix_a.position, suffix_a.length, getSuf(suffix_a))
         #print(suffix_b.source, suffix_b.position, suffix_b.length, getSuf(suffix_b))
 
+
         check_length = min(suffix_a.length, suffix_b.length)
         counter = 0
         for x in range(check_length):
