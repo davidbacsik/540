@@ -200,6 +200,7 @@ def findLongest():
         out_file.write('\n{0}, {1}, {2}\n'.format(suffix_a.source, suffix_a.position, getSuf(suffix_a)))
         out_file.write('{0}, {1}, {2}\n'.format(suffix_b.source, suffix_b.position, getSuf(suffix_b)))
 
+
         check_length = min(suffix_a.length, suffix_b.length)
         counter = 0
         match_strings = (list(), list())

@@ -1,0 +1,71 @@
+Assignment: GS540 HW1
+Name: David Bacsik
+Email: dbacsik@uw.edu
+Language: Python
+Run time: 0.536275863647
+
+Fasta 1: test_files/flu_1.fna
+>flu_1
+A=605
+C=360
+T=459
+G=433
+N=0
+*=1857
+
+Fasta 2: test_files/flu_2.fna
+>flu_2
+A=623
+C=337
+T=447
+G=428
+N=0
+*=1835
+
+Match length: 60
+Number of match strings: 4
+
+Match string: CAAAGAACCTCTGGGTCCAAGGGTAGACCACCAGCAGCCTGCCCAGGGCCTCACCACCAA
+Description:
+
+Fasta: flu_2
+Position: 381
+Strand: reverse
+
+Fasta: flu_1
+Position: 329
+Strand: reverse
+
+Match string: CAAAGAACCTCTGGGTCCAAGGGTAGACCACCAGCAGCCTGCCCAGGGCCTCACCACCAA
+Description:
+
+Fasta: flu_1
+Position: 329
+Strand: reverse
+
+Fasta: flu_1
+Position: 1451
+Strand: reverse
+
+Match string: TTGGTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTGGACCCAGAGGTTCTTTG
+Description:
+
+Fasta: flu_1
+Position: 346
+Strand: forward
+
+Fasta: flu_2
+Position: 1394
+Strand: forward
+
+Match string: TTGGTGGTGAGGCCCTGGGCAGGCTGCTGGTGGTCTACCCTTGGACCCAGAGGTTCTTTG
+Description:
+
+Fasta: flu_2
+Position: 1394
+Strand: forward
+
+Fasta: flu_1
+Position: 1468
+Strand: forward
+
