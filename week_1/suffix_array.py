@@ -110,7 +110,6 @@ class suffix(object):
         '''
 
         # Basic from FASTA
-        self.seq = str()
         self.length = int()
         self.source = str()
         self.orientation = str() # True if forward, False if reverse.
@@ -192,20 +191,23 @@ def findLongest():
     max_counter = None
     max_suffices = list()
 
+    out_file = open('matches.txt','w')
+
     for i in range(len(suffix_array)-1):
         suffix_a = suffix_array[i]
         suffix_b = suffix_array[i+1]
 
-        #print(suffix_a.source, suffix_a.position, suffix_a.length, getSuf(suffix_a))
-        #print(suffix_b.source, suffix_b.position, suffix_b.length, getSuf(suffix_b))
+        out_file.write('\n{0}, {1}, {2}\n'.format(suffix_a.source, suffix_a.position, getSuf(suffix_a)))
+        out_file.write('{0}, {1}, {2}\n'.format(suffix_b.source, suffix_b.position, getSuf(suffix_b)))
 
         check_length = min(suffix_a.length, suffix_b.length)
         counter = 0
+        match_strings = (list(), list())
         for x in range(check_length):
-            #print(getSuf(suffix_a)[x], getSuf(suffix_b)[x])
-            if getSuf(suffix_a)[x] == getSuf(suffix_b)[x]:
-                counter += 1
-            else:
+            match_strings[0].append(getSuf(suffix_a)[x])
+            match_strings[1].append(getSuf(suffix_b)[x])
+            if getSuf(suffix_a)[x] != getSuf(suffix_b)[x] or x == check_length-1:
+                out_file.write('{0}, {1}\n'.format(match_strings, counter))
                 if counter > max_counter:
                     max_counter = counter
                     max_suffices = [(suffix_a,suffix_b,counter)]
@@ -218,6 +220,8 @@ def findLongest():
                     print(getSuf(suffix_a)[:x], suffix_a.source, suffix_a.position)
                     print(getSuf(suffix_b)[:x], suffix_b.source, suffix_b.position)
                 break
+            else:
+                counter += 1
 
 def writeOutput(args, runtime):
     '''
@@ -276,6 +280,7 @@ def main():
 
     # Global vars
     global genomes
+    global suffix_array
 
     # Start timer
     start_time = time.time()
@@ -313,9 +318,19 @@ def main():
     # Make Suffix Array
     populateSuffix()
 
+    print('Writing suffices to text file sufs.txt\n')
+    with open('sufs.txt', 'w') as out_file:
+        for suf in suffix_array:
+            out_file.write('{0}, {1}, {2}\n'.format(suf.source, suf.length, getSuf(suf)))
+
     print('Sorting.\n')
     # Sort Suffix Array
     sortSuffix()
+
+    print('Writing sorted suffices to sufs_sorted.txt\n')
+    with open('sufs_sorted.txt', 'w') as out_file:
+        for suf in suffix_array:
+            out_file.write('{0}, {1}, {2}\n'.format(suf.source, suf.length, getSuf(suf)))
 
     print('Finding longest match.\n')
     # Find longest matching string
